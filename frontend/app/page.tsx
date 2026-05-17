@@ -22,8 +22,12 @@ export default function Page() {
     const loadJobs = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/jobs");
+
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+        const res = await fetch(`${API_URL}/jobs`);
         const data = await res.json();
+
         setJobs(data);
       } catch (err) {
         console.error("Error communicating with backend API:", err);
@@ -48,7 +52,6 @@ export default function Page() {
     }
   };
 
-  // Fixed: Fallback empty array prevents crash, matching 'job.category' fixes sorting visibility
   const filteredJobs = (Array.isArray(jobs) ? jobs : []).filter((job) => {
     const matchesSearch =
       job.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -61,30 +64,29 @@ export default function Page() {
   });
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8 text-gray-900">
+    <main className="min-h-screen bg-slate-50 p-8 text-slate-900">
       <div className="max-w-5xl mx-auto">
 
-        {/* HEADER BLOCK */}
+        {/* HEADER */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold">🛠 Service Requests</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-4xl font-bold text-slate-800">Service Requests</h1>
+            <p className="text-slate-500 mt-1">
               Manage and track all homeowner job postings
             </p>
           </div>
 
           <Link
             href="/new"
-            className="bg-black text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition font-medium"
+            className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium shadow-sm"
           >
-            + Post New Request
+            Post New Request
           </Link>
         </div>
 
-        {/* CONTROLS: SEARCH + CATEGORY FILTER DROPDOWN */}
+        {/* SEARCH + FILTER */}
         <div className="flex gap-3 mb-8">
-          <div className="flex items-center bg-white border border-gray-300 rounded-lg px-3 flex-1 shadow-sm">
-            <span className="text-gray-400 mr-2">🔍</span>
+          <div className="flex items-center bg-white border border-slate-200 rounded-lg px-4 flex-1 shadow-sm focus-within:border-indigo-400 focus-within:ring-1 focus-within:ring-indigo-400 transition">
             <input
               type="text"
               placeholder="Search by title or description..."
@@ -97,7 +99,7 @@ export default function Page() {
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="bg-white border border-gray-300 rounded-lg px-4 py-2 shadow-sm font-medium outline-none cursor-pointer"
+            className="bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm font-medium outline-none cursor-pointer focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 transition"
           >
             <option value="All">All Categories</option>
             <option value="Plumbing">Plumbing</option>
@@ -107,7 +109,7 @@ export default function Page() {
           </select>
         </div>
 
-        {/* SKELETON LOADING UI STATES */}
+        {/* LOADING */}
         {loading ? (
           <div className="grid gap-4">
             {[1, 2, 3].map((i) => (
@@ -133,19 +135,18 @@ export default function Page() {
                   key={job._id}
                   className="bg-white border border-gray-300 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-200"
                 >
-                  {/* SERVICE DATA CARD TOP LINE */}
                   <div className="flex justify-between items-start">
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900">
-                        📌 <Link 
-                          href={`/jobs/${job._id}`} 
-                          className="hover:underline text-blue-600 hover:text-blue-800 transition"
+                      <h2 className="text-xl font-bold text-slate-800">
+                        <Link
+                          href={`/jobs/${job._id}`}
+                          className="hover:underline text-indigo-600 hover:text-indigo-800 transition"
                         >
                           {job.title}
                         </Link>
                       </h2>
 
-                      <p className="text-gray-600 mt-2 max-w-3xl line-clamp-2">
+                      <p className="text-slate-600 mt-2 max-w-3xl line-clamp-2">
                         {job.description}
                       </p>
                     </div>
@@ -159,10 +160,10 @@ export default function Page() {
                     </span>
                   </div>
 
-                  {/* BOTTOM INFO DATA LINE */}
-                  <div className="flex gap-5 text-sm text-gray-500 mt-4 pt-4 border-t border-gray-100">
-                    <span className="flex items-center gap-1">📍 {job.location}</span>
-                    <span className="flex items-center gap-1">🏷️ {job.category}</span>
+                  <div className="flex gap-5 text-sm text-slate-500 mt-4 pt-4 border-t border-slate-100">
+                    <span>{job.location}</span>
+                    <span className="text-slate-300">|</span>
+                    <span>{job.category}</span>
                   </div>
                 </div>
               ))

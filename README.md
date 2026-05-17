@@ -1,25 +1,19 @@
-# 🛠 Service Request Board (Full Stack App)
+# 🛠 Service Request Board
 
-A full-stack web application where users can create, view, update, and manage service requests such as plumbing, electrical, and other home services.
+A full-stack web application for managing homeowner service requests such as plumbing, electrical work, painting, and other maintenance tasks.
 
-Built as part of a technical assessment using Next.js, Node.js, Express, and MongoDB.
-
----
-
-## 🚀 Live Demo
-Frontend: http://localhost:3000  
-Backend: http://localhost:5000  
+Users can create requests, track their progress, update statuses, and manage jobs through a clean dashboard interface.
 
 ---
 
-## 🧰 Tech Stack
+## 🚀 Tech Stack
 
-**Frontend**
+### Frontend
 - Next.js (App Router)
 - React
 - Tailwind CSS
 
-**Backend**
+### Backend
 - Node.js
 - Express.js
 - MongoDB
@@ -27,91 +21,94 @@ Backend: http://localhost:5000
 
 ---
 
-## 📌 Features
+## ✨ Features
 
-### Core Features
-- Create service requests
-- View all requests
-- Update job status (Open / In Progress / Closed)
+### Core Functionality
+- Create new service requests
+- View all job requests
+- View detailed job information
+- Update request status
 - Delete requests
-- REST API integration between frontend and backend
 
-### Extra Features
-- Search by title and description
-- Filter by status
-- Status color badges
-- Loading skeleton UI
-- Clean dashboard UI
+### UI & UX
+- Search requests by title or description
+- Filter requests by category
+- Status badges with color indicators
+- Loading skeleton states
+- Responsive dashboard layout
+- Clean and modern interface
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
+```text
 service-request-board/
 ├── backend/
-│   ├── server.js
 │   ├── models/
 │   ├── routes/
+│   ├── server.js
 │   └── .env
-│
-├── frontend/
-│   ├── app/
-│   │   ├── page.tsx
-│   │   └── new/
-│   ├── public/
-│   ├── package.json
-│
-└── README.md
+└── frontend/
+    ├── app/
+    │   ├── jobs/
+    │   │   └── [id]/
+    │   │       └── page.tsx
+    │   ├── new/
+    │   │   └── page.tsx
+    │   └── page.tsx
+    ├── public/
+    └── package.json
 
----
 
-## ⚙️ Setup Instructions
-
-### 1. Clone the repo
-```bash
-git clone <your-repo-url>
+⚙️ Installation & Setup
+1. Clone Repository
+git clone <your-repository-url>
 cd service-request-board
-2. Backend Setup
+🔧 Backend Setup
 cd backend
 npm install
 
-Create .env file:
+Create a .env file inside the backend folder:
 
 MONGO_URI=your_mongodb_connection_string
 PORT=5000
 
-Run backend:
+Run the backend server:
 
-npm run dev
-3. Frontend Setup
+node server.js
+
+Backend runs on:
+
+http://localhost:5000
+💻 Frontend Setup
 cd frontend
 npm install
 npm run dev
-🌐 Running App
 
-Frontend: http://localhost:3000
-Backend API: http://localhost:5000/api/jobs
+Frontend runs on:
 
+http://localhost:3000
 🔗 API Endpoints
-
-GET /api/jobs - Get all jobs
-GET /api/jobs/:id - Get single job
-POST /api/jobs - Create job
-PATCH /api/jobs/:id - Update job status
-DELETE /api/jobs/:id - Delete job
-
-🧠 Notes
-Frontend communicates directly with Express API
-MongoDB stores all job data
-UI updates instantly after actions
-Search and filter implemented on frontend
-🎯 Highlights
-Full-stack CRUD system
-Real-time UI updates
-Clean UI with Tailwind
-Loading skeleton states
-Filter + search system
+Method	Endpoint	Description
+GET	/api/jobs	Get all jobs
+GET	/api/jobs/:id	Get single job
+POST	/api/jobs	Create new job
+PATCH	/api/jobs/:id	Update job status
+DELETE	/api/jobs/:id	Delete job
+🧠 System Flow
+Frontend communicates directly with the Express backend API
+Express handles request validation and database operations
+MongoDB stores all job request data
+UI updates dynamically after create, update, and delete actions
+🎯 Project Highlights
+Full-stack CRUD application
+REST API integration
+Dynamic routing with Next.js App Router
+MongoDB database integration
+Client-side filtering and searching
+Clean responsive UI using Tailwind CSS
 👩‍💻 Author
 
 Hafsa
-Full Stack Developer Intern Project
+Software Engineering Undergraduate

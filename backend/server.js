@@ -3,34 +3,33 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Fixes the SSL block for local testing
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const jobRoutes = require('./routes/jobRoutes');
 
 const app = express();
 
-app.use(cors());
+// Middleware
+app.use(cors({
+  origin: "*"
+}));
 app.use(express.json());
 
 // Routes
 app.use('/api/jobs', jobRoutes);
 
-// Test route
+// Health check route
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// 1. Catch-all fallback route for unhandled endpoints (404 Not Found)
-app.use((req, res, next) => {
+// 404 handler
+app.use((req, res) => {
   res.status(404).json({ message: 'Resource not found' });
 });
 
-// 2. Global centralized error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
   console.error('Global Error Logged:', err.message);
 
-  // Catches malformed or mistyped MongoDB ObjectIDs cleanly
   if (err.name === 'CastError') {
     return res.status(400).json({ message: 'Invalid ID format specified' });
   }
@@ -39,13 +38,15 @@ app.use((err, req, res, next) => {
 });
 
 // Connect DB + start server
+const PORT = process.env.PORT || 5000;
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
 
-    app.listen(process.env.PORT, () => {
-      console.log(`Server running on port ${process.env.PORT}`);
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch((err) => console.log(err));
