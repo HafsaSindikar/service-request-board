@@ -1,4 +1,4 @@
-# 🛠️ Homeowner Service Request Board
+# 🛠️ Service Request Board
 
 A full-stack web application designed for managing and tracking homeowner service requests (e.g., plumbing, electrical work, painting, joinery). Homeowners and technicians can create requests, search/filter items, and update request statuses via a modern, clean, and responsive dashboard.
 
