@@ -1,63 +1,102 @@
 const express = require("express");
 const router = express.Router();
-const Job = require("../models/JobRequest");
+const JobRequest = require("../models/JobRequest");
 
-// CREATE job
-router.post("/", async (req, res) => {
+
+// GET /api/jobs (with optional filters)
+router.get("/", async (req, res, next) => {
   try {
-    const job = new Job(req.body);
-    await job.save();
+    const { category, status } = req.query;
+    let filter = {};
+
+    if (category) filter.category = category;
+    if (status) filter.status = status;
+
+    const jobs = await JobRequest.find(filter).sort({ createdAt: -1 });
+    res.status(200).json(jobs);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/jobs/:id
+router.get("/:id", async (req, res, next) => {
+  try {
+    const job = await JobRequest.findById(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json(job);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/jobs (with comprehensive basic input validation)
+router.post("/", async (req, res, next) => {
+  try {
+    const { title, description, category, location, contactName, contactEmail } = req.body;
+
+    // Basic Input Validation
+    if (!title || !description || !category || !location || !contactName || !contactEmail) {
+      return res.status(400).json({ message: "All form fields are required" });
+    }
+
+    if (!contactEmail.includes("@")) {
+      return res.status(400).json({ message: "Invalid email address format" });
+    }
+
+    const job = await JobRequest.create(req.body);
     res.status(201).json(job);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    next(err);
   }
 });
 
-// GET all jobs
-router.get("/", async (req, res) => {
+// PATCH /api/jobs/:id (status update only)
+router.patch("/:id", async (req, res, next) => {
   try {
-    const jobs = await Job.find();
-    res.json(jobs);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+    const { status } = req.body;
 
-// GET single job
-router.get("/:id", async (req, res) => {
-  try {
-    const job = await Job.findById(req.params.id);
-    if (!job) return res.status(404).json({ message: "Job not found" });
-    res.json(job);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+    if (!status) {
+      return res.status(400).json({ message: "Status required" });
+    }
 
-// UPDATE job status
-router.patch("/:id", async (req, res) => {
-  try {
-    const updatedJob = await Job.findByIdAndUpdate(
+    const allowed = ["Open", "In Progress", "Closed"];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const job = await JobRequest.findByIdAndUpdate(
       req.params.id,
-      { status: req.body.status },
-      { returnDocument: "after" } // Replaced deprecated { new: true }
+      { status },
+      { returnDocument: "after" } // Safe upgrade avoiding deprecated { new: true } logs
     );
 
-    if (!updatedJob) return res.status(404).json({ message: "Job not found" });
-    res.json(updatedJob);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json(job);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 });
 
-// DELETE job
-router.delete("/:id", async (req, res) => {
+// DELETE /api/jobs/:id
+router.delete("/:id", async (req, res, next) => {
   try {
-    const deletedJob = await Job.findByIdAndDelete(req.params.id);
-    if (!deletedJob) return res.status(404).json({ message: "Job not found" });
-    res.json({ message: "Job deleted successfully" });
+    const job = await JobRequest.findByIdAndDelete(req.params.id);
+
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    res.status(200).json({ message: "Job deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 });
 

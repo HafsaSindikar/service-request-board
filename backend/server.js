@@ -13,15 +13,32 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// routes
+// Routes
 app.use('/api/jobs', jobRoutes);
 
-// test route
+// Test route
 app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-// connect DB + start server
+// 1. Catch-all fallback route for unhandled endpoints (404 Not Found)
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Resource not found' });
+});
+
+// 2. Global centralized error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global Error Logged:', err.message);
+
+  // Catches malformed or mistyped MongoDB ObjectIDs cleanly
+  if (err.name === 'CastError') {
+    return res.status(400).json({ message: 'Invalid ID format specified' });
+  }
+
+  res.status(500).json({ message: err.message || 'Internal Server Error' });
+});
+
+// Connect DB + start server
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {

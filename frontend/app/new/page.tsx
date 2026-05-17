@@ -5,63 +5,71 @@ import { useState } from 'react';
 
 export default function NewJob() {
   const router = useRouter();
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
     title: '',
     description: '',
-    category: '',
+    category: 'Plumbing',
     location: '',
     contactName: '',
     contactEmail: '',
   });
 
-  // Fixed: Replaced 'any' with proper HTML change event type
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Fixed: Replaced 'any' with proper HTML form submission event type
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError('');
 
     try {
-      await fetch('http://localhost:5000/api/jobs', {
+      const res = await fetch('http://localhost:5000/api/jobs', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || 'Submission failed');
+        return;
+      }
+
       router.push("/");
     } catch (err) {
-      console.error("Failed to submit job:", err);
+      setError('Cannot connect to backend API server');
     }
   };
 
   return (
-    <main style={{ padding: 20 }}>
-      <h1>Create Job</h1>
+    <main className="min-h-screen bg-gray-100 p-8 text-gray-900">
+      <div className="max-w-xl mx-auto bg-white border border-gray-300 rounded-2xl p-6 shadow-sm">
+        <h1 className="text-2xl font-bold mb-4">Create Service Request</h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 10 }}>
-        <input name="title" placeholder="Title" value={form.title} onChange={handleChange} />
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={form.description}
-          onChange={handleChange}
-        />
-        <input name="category" placeholder="Category" value={form.category} onChange={handleChange} />
-        <input name="location" placeholder="Location" value={form.location} onChange={handleChange} />
-        <input name="contactName" placeholder="Name" value={form.contactName} onChange={handleChange} />
-        <input
-          name="contactEmail"
-          placeholder="Email"
-          value={form.contactEmail}
-          onChange={handleChange}
-        />
+        {error && <p className="bg-red-100 text-red-700 p-3 rounded-lg mb-4 text-sm font-medium">{error}</p>}
 
-        <button type="submit">Create</button>
-      </form>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input className="border p-2 rounded" name="title" placeholder="Title" value={form.title} onChange={handleChange} required />
+          <textarea className="border p-2 rounded h-24" name="description" placeholder="Description" value={form.description} onChange={handleChange} required />
+          
+          <select className="border p-2 rounded bg-white" name="category" value={form.category} onChange={handleChange}>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Painting">Painting</option>
+            <option value="Joinery">Joinery</option>
+          </select>
+
+          <input className="border p-2 rounded" name="location" placeholder="Location (e.g. Glasgow)" value={form.location} onChange={handleChange} required />
+          <input className="border p-2 rounded" name="contactName" placeholder="Your Name" value={form.contactName} onChange={handleChange} required />
+          <input className="border p-2 rounded" type="email" name="contactEmail" placeholder="Your Email" value={form.contactEmail} onChange={handleChange} required />
+
+          <button type="submit" className="bg-black text-white p-3 rounded-lg font-bold hover:bg-gray-800 transition">
+            Create Request
+          </button>
+        </form>
+      </div>
     </main>
   );
 }
