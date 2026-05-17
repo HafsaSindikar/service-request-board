@@ -22,8 +22,10 @@ export default function JobDetail() {
 
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem("token"));
     if (!id) return;
 
     const loadJob = async () => {
@@ -54,8 +56,12 @@ export default function JobDetail() {
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL;
+      const token = localStorage.getItem('token');
       const res = await fetch(`${API_URL}/jobs/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       if (!res.ok) return;
@@ -143,12 +149,14 @@ export default function JobDetail() {
               </select>
             </div>
 
-            <button
-              onClick={handleDelete}
-              className="text-red-600 font-medium hover:text-red-800"
-            >
-              Delete
-            </button>
+            {isAuthenticated && (
+              <button
+                onClick={handleDelete}
+                className="text-red-600 font-medium hover:text-red-800 cursor-pointer"
+              >
+                Delete
+              </button>
+            )}
 
           </div>
 

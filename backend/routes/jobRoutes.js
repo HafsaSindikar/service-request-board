@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const JobRequest = require("../models/JobRequest");
+const auth = require("../middleware/auth");
 
 
 // GET /api/jobs (with optional filters)
@@ -35,7 +36,7 @@ router.get("/:id", async (req, res, next) => {
 });
 
 // POST /api/jobs (with comprehensive basic input validation)
-router.post("/", async (req, res, next) => {
+router.post("/", auth, async (req, res, next) => {
   try {
     const { title, description, category, location, contactName, contactEmail } = req.body;
 
@@ -86,7 +87,7 @@ router.patch("/:id", async (req, res, next) => {
 });
 
 // DELETE /api/jobs/:id
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", auth, async (req, res, next) => {
   try {
     const job = await JobRequest.findByIdAndDelete(req.params.id);
 

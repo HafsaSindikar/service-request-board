@@ -4,6 +4,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const jobRoutes = require('./routes/jobRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/jobs', jobRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health check route
 app.get('/', (req, res) => {

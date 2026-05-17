@@ -17,8 +17,11 @@ export default function Page() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem("token"));
+
     const loadJobs = async () => {
       try {
         setLoading(true);
@@ -76,12 +79,34 @@ export default function Page() {
             </p>
           </div>
 
-          <Link
-            href="/new"
-            className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium shadow-sm"
-          >
-            Post New Request
-          </Link>
+          <div className="flex gap-3">
+            {isAuthenticated ? (
+              <>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    setIsAuthenticated(false);
+                  }}
+                  className="border border-slate-200 text-slate-600 px-5 py-2.5 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition font-medium cursor-pointer"
+                >
+                  Logout
+                </button>
+                <Link
+                  href="/new"
+                  className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium shadow-sm"
+                >
+                  Post New Request
+                </Link>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium shadow-sm"
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* SEARCH + FILTER */}

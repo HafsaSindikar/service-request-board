@@ -69,22 +69,46 @@ cd service-request-board
 cd backend
 npm install
 
-Create a .env file inside the backend folder:
+Create a `.env` file inside the `backend` folder:
 
-MONGO_URI=your_mongodb_connection_string
+```text
 PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+ADMIN_EMAIL=admin@globaltna.com
+ADMIN_PASSWORD=globaltnapass
+```
+
+🔑 **Admin Credentials for Testing:**
+To create or delete requests, sign in with the following default admin credentials:
+*   **Email:** `admin@globaltna.com`
+*   **Password:** `globaltnapass`
 
 Run the backend server:
 
+```bash
 node server.js
+```
 
 Backend runs on:
 
 http://localhost:5000
 💻 Frontend Setup
+1. Navigate to the `frontend` folder:
+```bash
 cd frontend
+```
+
+2. Create a `.env.local` file:
+```text
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+3. Install packages and run:
+```bash
 npm install
 npm run dev
+```
 
 Frontend runs on:
 
