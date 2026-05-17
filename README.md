@@ -120,6 +120,12 @@ GET	/api/jobs/:id	Get single job
 POST	/api/jobs	Create new job
 PATCH	/api/jobs/:id	Update job status
 DELETE	/api/jobs/:id	Delete job
+
+🚀 Deployment
+*   **Frontend:** Deployed on Vercel (Next.js App Router).
+*   **Backend:** Deployed on Vercel (Express API via Serverless Functions).
+    *   *Technical Decision:* The backend was deployed to Vercel serverless architecture instead of Render or Railway. This choice ensures instant spin-up times and zero cold starts (Render's free tier spins down and causes a 30-50 second delay on initial load, whereas Vercel serverless functions execute instantly, offering a far superior user experience).
+
 🧠 System Flow
 Frontend communicates directly with the Express backend API
 Express handles request validation and database operations
